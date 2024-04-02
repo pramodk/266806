@@ -123,9 +123,10 @@ ASSIGNED {
 	mgi	(mM)
 	vrat	(1)	
         icazz (nA)
+        cao (mM)
 }
 
-CONSTANT { cao = 2	(mM) }
+:CONSTANT { cao = 2	(mM) }
 
 STATE {
 	: ca[0] is equivalent to cai
@@ -246,10 +247,11 @@ PROCEDURE factors() {
 }
 
 
-LOCAL dsq, dsqvol  : can't define local variable in KINETIC block
+: LOCAL dsq, dsqvol  : can't define local variable in KINETIC block
                    :   or use in COMPARTMENT statement
 
 KINETIC state {
+  LOCAL dsq, dsqvol
   COMPARTMENT diam*diam*vrat {ca mg Buff1 Buff1_ca Buff2 Buff2_ca BTC BTC_ca DMNPE DMNPE_ca PV PV_ca PV_mg}
   COMPARTMENT (1e10)*parea {pump pumpca}
 

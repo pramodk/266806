@@ -15,7 +15,7 @@ NEURON {
 	NONSPECIFIC_CURRENT ih
 	RANGE Q10_diff,Q10_channel,gbar_Q10, ic
 	RANGE o_fast_inf, o_slow_inf, tau_f, tau_s, Erev
-	RANGE gbar,r,g, o
+	RANGE gbar,g, o
 }       
         
 UNITS {
