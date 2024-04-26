@@ -21,9 +21,10 @@ Fixed_step.active(0)
 cpu = multiprocessing.cpu_count()
 h.load_file("parcom.hoc")
 p = h.ParallelComputeTool()
-p.change_nthread(cpu,1)
-p.multisplit(1)
-print(cpu)
+if h.mycpu > 1.0:
+    p.change_nthread(h.mycpu,1)
+    p.multisplit(1)
+print(h.mycpu)
 
 #Voltage graph
 h('load_file("vm.ses")')
@@ -37,13 +38,23 @@ h.celsius = 32
 h.tstop = 1000
 h.v_init = -65
 
+pc = h.ParallelContext()
+pc.set_gid2node(0, 0)
+pc.cell(0, cell.nc_spike)
+pc.set_maxstep(10)
+#from neuron import coreneuron
+#coreneuron.enable = 0
+#coreneuron.file_mode = 0
 #Initialization 
 def initialize():
     h.finitialize()
     h.run()
+#    h.stdinit()
+#    pc.psolve(h.tstop)
 
 initialize()
 
+'''
 #Save the results into an image
 fig, ax = plt.subplots()
 ax.plot(np.array(cell.time_vector), np.array(cell.vm), 'b', label='spikes')
@@ -59,4 +70,4 @@ plt.ylabel("membrane voltage (mv) ")
 
 plt.savefig('01_SS_trace.eps')
 plt.close()
-
+'''
