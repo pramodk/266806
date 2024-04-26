@@ -124,6 +124,7 @@ ASSIGNED {
 	vrat	(1)	
         icazz (nA)
         cao (mM)
+        d (um)
 }
 
 :CONSTANT { cao = 2	(mM) }
@@ -190,6 +191,7 @@ BREAKPOINT {
 LOCAL factors_done
 
 INITIAL {
+		d = diam
 		factors()
 
 		ca = cainull
@@ -252,7 +254,7 @@ PROCEDURE factors() {
 
 KINETIC state {
   LOCAL dsq, dsqvol
-  COMPARTMENT diam*diam*vrat {ca mg Buff1 Buff1_ca Buff2 Buff2_ca BTC BTC_ca DMNPE DMNPE_ca PV PV_ca PV_mg}
+  COMPARTMENT d*d*vrat {ca mg Buff1 Buff1_ca Buff2 Buff2_ca BTC BTC_ca DMNPE DMNPE_ca PV PV_ca PV_mg}
   COMPARTMENT (1e10)*parea {pump pumpca}
 
 
@@ -264,11 +266,11 @@ KINETIC state {
 	ica_pmp = 2*FARADAY*(f_flux - b_flux)/parea	
 	: all currents except pump
 	: ica is Ca efflux
-	~ ca << (-ica*PI*diam/(2*FARADAY))
+	~ ca << (-ica*PI*d/(2*FARADAY))
 
 	:RADIAL DIFFUSION OF ca, mg and mobile buffers
 
-	dsq = diam*diam
+	dsq = d*d
 		dsqvol = dsq*vrat
 		~ ca + Buff1 <-> Buff1_ca (rf1*dsqvol, rf2*dsqvol)
 		~ ca + Buff2 <-> Buff2_ca (rf3*dsqvol, rf4*dsqvol)
