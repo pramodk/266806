@@ -4,24 +4,20 @@
 #import matplotlib as mpl
 #mpl.use('tkagg')
 #import matplotlib.pyplot as plt
+
 from neuron import h,gui 
 from Golgi2020_morpho_1 import Golgi_morpho_1
 import multiprocessing
 import numpy as np
 import sys
-
-#import itt
-#itt.pause()
-
-
-#this code discover the number of cores available in a CPU and activate the multisplit to use them all.
-mycpu = multiprocessing.cpu_count()
-# for benchmarking
 import os
-mycpu = int(os.environ['NRN_THREADS']) if 'NRN_THREADS' in os.environ else 1
+
+mycpu = multiprocessing.cpu_count()
+mycpu = int(os.environ['NRN_THREADS']) if 'NRN_THREADS' in os.environ else mycpu
 
 #Instantiation of the cell template
-cell = [Golgi_morpho_1() for _ in range(24)]
+#cell = [Golgi_morpho_1() for _ in range(24)]
+cell = [Golgi_morpho_1()]
 
 #fixed time step only
 Fixed_step = h.CVode()
@@ -31,7 +27,7 @@ h.load_file("parcom.hoc")
 p = h.ParallelComputeTool()
 if mycpu > 1.0:
     p.change_nthread(mycpu,1)
-    #p.multisplit(1)
+    p.multisplit(1)
 
 #Voltage graph
 h('load_file("vm.ses")')
@@ -42,7 +38,7 @@ h.nrncontrolmenu()
 #Basic properties of the simulation. dt, temperature, sim duration and initial voltage
 h.dt = 0.025
 h.celsius = 32
-h.tstop = 10
+h.tstop = 100
 h.v_init = -65
 
 pc = h.ParallelContext()
@@ -54,27 +50,15 @@ pc.set_maxstep(10)
 
 
 #Initialization 
-def initialize(enable_coreneuron):
-
-    from neuron import coreneuron
-    coreneuron.enable = enable_coreneuron
-    coreneuron.file_mode = 0
-
-    h.finitialize(-65)
+def run():
     import time
+    h.stdinit()
     t0 = time.time()
-    print("Starting Run CN: #ccores active: %d" % mycpu)
-    #itt.resume()
-    #h.run()
-#    h.stdinit()
     pc.psolve(h.tstop)
-    #itt.pause()
     t1 = time.time()
     print("NEURON RUN with %d threads took %f " % (mycpu, t1-t0))
 
-initialize(False)
-#initialize(True)
-
+run()
 h.quit()
 
 '''
